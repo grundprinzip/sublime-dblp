@@ -1,6 +1,6 @@
 # DBLP Search for Sublime
 
-This plugin for SublimeText 2 is a small extension to working with  LaTeX
+This plugin for SublimeText 2 is a small extension for working with  LaTeX
 documents. It allows you to define a query to DBLP and will present  you with a
 list of matching papers. Selecting a paper will insert the necessary DBLP
 citation key.
