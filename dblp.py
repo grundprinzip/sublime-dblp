@@ -94,6 +94,10 @@ def do_response(data):
     Presents the response of the DBLP Query to the user
     """
     def on_done(i):
+
+        if i == -1:
+            return
+
         cite_key = data[i][2]
         view = sublime.active_window().active_view()
         # Get the first selection
