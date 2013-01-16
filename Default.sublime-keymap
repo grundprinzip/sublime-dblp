@@ -1,0 +1,4 @@
+[
+	{ 	"keys": ["ctrl+.", "ctrl+d"], 
+		"command": "dblp_search"}
+]
