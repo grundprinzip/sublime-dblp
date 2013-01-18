@@ -12,5 +12,7 @@ The current keyboard shortcut is:
 
 	CTRL+. , CTRL+d
 
+DBLP Search for Sublime can now be installed directly using the [Package Control][pc].
 
 [dblp]: https://github.com/grundprinzip/dblp
+[pc]: http://wbond.net/sublime_packages/package_control
