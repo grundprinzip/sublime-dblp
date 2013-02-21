@@ -1,7 +1,13 @@
 import sublime
 import sublime_plugin
 
-import httplib, urllib
+# Sublime Text 3 Python 3 compatibility
+try:
+    import httplib
+except ImportError e
+    import http.client as httplib
+
+import urllib
 import json
 import re
 import functools
