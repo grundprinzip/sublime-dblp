@@ -16,7 +16,7 @@ import threading
 
 def strip_tags(value):
     """Returns the given HTML with all tags stripped."""
-    return re.sub(r'<[^>]*?>', '', value.encode("ascii", "ignore"))
+    return re.sub(r'<[^>]*?>', '', value)
 
 class SearchDBLPThread(threading.Thread):
 
@@ -31,7 +31,8 @@ class SearchDBLPThread(threading.Thread):
 
     def run(self):
         conn = httplib.HTTPConnection("dblp.org")
-        params = urllib.urlencode({
+        fun = urllib.urlencode if "urlencode" in urllib.__dict__ else urllib.parse.urlencode
+        params = fun({
             "accc": ":",
             "bnm" :"A",
             "deb" :"0",
@@ -68,7 +69,10 @@ class SearchDBLPThread(threading.Thread):
         conn.request("POST", "/autocomplete-php/autocomplete/ajax.php", params, headers)
         response = conn.getresponse()
         if response.status == 200:
-            data = response.read()
+            data = response.read().decode("utf-8")
+
+            
+
             parsed_data = (data.split("\n")[30].split("=", 1)[1])
             # mangle ill formed json
             parsed_data = parsed_data.replace("'", "\"")[:-1]
@@ -81,13 +85,13 @@ class SearchDBLPThread(threading.Thread):
             result = []
             # Filter the relevant information:
             for match in re.finditer(regexp, body):
-                cite_key = "DBLP:" + match.group(1).encode("ascii", "ignore")
+                print(match.group(1))
+                cite_key = u"DBLP:" + match.group(1)
                 title = strip_tags(match.group(3))
 
                 authors, title = title.split(":", 1)
                 result.append([title, authors, cite_key])
 
-            #print result
             sublime.set_timeout(functools.partial(do_response,
                 result),1)
             return
@@ -95,22 +99,23 @@ class SearchDBLPThread(threading.Thread):
         print(response.reason())
         return
 
+class DblpInsertResultCommand(sublime_plugin.TextCommand):
+
+    def run(self, edit, text):
+        sel = self.view.sel()[0]
+        self.view.insert(edit, sel.begin(), "\cite{%s}" % text)
+
 def do_response(data):
     """
     Presents the response of the DBLP Query to the user
     """
     def on_done(i):
-
         if i == -1:
             return
 
         cite_key = data[i][2]
         view = sublime.active_window().active_view()
-        # Get the first selection
-        sel = view.sel()[0]
-        edit = view.begin_edit()
-        view.insert(edit, sel.begin(), "\cite{%s}" % cite_key)
-        view.end_edit(edit)
+        view.run_command("dblp_insert_result", {"text": cite_key})
 
     sublime.active_window().show_quick_panel(data, on_done)
 
