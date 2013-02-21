@@ -3,8 +3,8 @@ import sublime_plugin
 
 # Sublime Text 3 Python 3 compatibility
 try:
-    import httplib
-except ImportError e
+    import httplib    
+except ImportError, e:
     import http.client as httplib
 
 import urllib
