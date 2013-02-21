@@ -81,12 +81,12 @@ class SearchDBLPThread(threading.Thread):
                 authors, title = title.split(":", 1)
                 result.append([title, authors, cite_key])
 
-            print result
+            #print result
             sublime.set_timeout(functools.partial(do_response,
                 result),1)
             return
 
-        print response.reason()
+        print(response.reason())
         return
 
 def do_response(data):
@@ -118,7 +118,7 @@ class DblpSearchCommand(sublime_plugin.TextCommand):
         def on_done(q):
             if len(q) > 3:
                 if self._queryThread != None:
-                    print "Starting Thread..."
+                    print("Starting Thread...")
                     self._queryThread.stop()
                 self._queryThread = SearchDBLPThread(self.view, q)
                 self._queryThread.start()
